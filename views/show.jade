@@ -1,0 +1,52 @@
+extends layout
+
+block content
+    .post
+     h1=post.title
+     p.meta Posted in 
+      a(href='/categories/show/#{post.category}') #{post.category} 
+      by #{post.author} 
+      on #{moment(post.date).format("MM-DD-YYYY")}
+     img(src='/images/#{post.mainimage}')
+     !=post.body
+     .row
+      if user
+       if post.likes.includes(user._id)
+        button(onclick="actOnPost(event);",data-post-id="#{post._id}") Unlike
+       else 
+        button(onclick="actOnPost(event);",data-post-id="#{post._id}") Like
+      if !user
+        i.fas.fa-thumbs-up
+      span(id="likes-count-#{post._id}")=post.likes.length
+     br
+     hr
+     if post.comments 
+      h3 Comments
+      each comment, i in post.comments
+       .comment
+        .comment-section
+         p.comment-name #{comment.name}
+         p.comment-body  #{comment.body}
+        .comment-dateSection
+         p.comment-date #{moment(comment.commentDate).fromNow()}
+       hr
+    br
+    if user
+     h3 Add Comment 
+     
+     form.comment-form(action="/posts/addcomments", method='post')
+      input(type="hidden",name="postid", value="#{post._id}")
+      .form-group 
+       label Name 
+       input.form-control(type="text",name="name",placeholder="Enter Name")
+      .form-group 
+       label Email 
+       input.form-control(type="email",name="email",placeholder="Enter Email")
+      .form-group 
+       label Body 
+       textarea.form-control(name="body")
+      br
+      input.btn.btn-default(type="submit",value="Add Comment")
+
+        
+        
